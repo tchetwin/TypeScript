@@ -782,6 +782,24 @@ namespace ts {
             resolveTypeReferenceDirectiveNamesWorker = (typeReferenceDirectiveNames, containingFile, redirectedReference) => loadWithLocalCache<ResolvedTypeReferenceDirective>(Debug.checkEachDefined(typeReferenceDirectiveNames), containingFile, redirectedReference, loader);
         }
 
+        const actualResolveModuleNamesWorker = resolveModuleNamesWorker;
+        resolveModuleNamesWorker = (moduleNames, containingFile, reusedNames, redirectedReference) => {
+            performance.mark("beforeResolveModule");
+            const result = actualResolveModuleNamesWorker(moduleNames, containingFile, reusedNames, redirectedReference);
+            performance.mark("afterResolveModule");
+            performance.measure("ResolveModule", "beforeResolveModule", "afterResolveModule");
+            return result;
+        };
+
+        const actualResolveTypeReferenceDirectiveNamesWorker = resolveTypeReferenceDirectiveNamesWorker;
+        resolveTypeReferenceDirectiveNamesWorker = (typeDirectiveNames, containingFile, redirectedReference) => {
+            performance.mark("beforeResolveTypeReference");
+            const result = actualResolveTypeReferenceDirectiveNamesWorker(typeDirectiveNames, containingFile, redirectedReference);
+            performance.mark("afterResolveTypeReference");
+            performance.measure("ResolveTypeReference", "beforeResolveTypeReference", "afterResolveTypeReference");
+            return result;
+        };
+
         // Map from a stringified PackageId to the source file with that id.
         // Only one source file may have a given packageId. Others become redirects (see createRedirectSourceFile).
         // `packageIdToSourceFile` is only used while building the program, while `sourceFileToPackageName` and `isSourceFileTargetOfRedirect` are kept around.
