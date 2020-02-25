@@ -1803,7 +1803,8 @@ namespace ts {
         return kind === SyntaxKind.Identifier
             || kind === SyntaxKind.StringLiteral
             || kind === SyntaxKind.NumericLiteral
-            || kind === SyntaxKind.ComputedPropertyName;
+            || kind === SyntaxKind.ComputedPropertyName
+            || kind === SyntaxKind.PrivateIdentifier;
     }
 
     export function isBindingName(node: Node): node is BindingName {
